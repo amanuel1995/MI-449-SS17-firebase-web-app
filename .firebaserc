@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "sample-firebase-app-e4fc4"
+    "default": "sample-firebase-app-e4fc4",
+    "learn": "public-web-chat"
   }
 }
