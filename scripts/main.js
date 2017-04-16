@@ -55,27 +55,12 @@ function FriendlyChat() {
 
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 FriendlyChat.prototype.initFirebase = function() {
-  // Shortcuts to Firebase SDK features.
-  this.auth = firebase.auth();
-  this.database = firebase.database();
-  this.storage = firebase.storage();
-  // Initiates Firebase auth and listen to auth state changes.
-  this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
+  // TODO(DEVELOPER): Initialize Firebase.
 };
 
 // Loads chat messages history and listens for upcoming ones.
 FriendlyChat.prototype.loadMessages = function() {
-  // Reference to the /messages/ database path.
-  this.messagesRef = this.database.ref('messages');
-  // Make sure we remove all previous listeners.
-  this.messagesRef.off();
-  // Loads the last 12 messages and listen for new ones.
-  var setMessage = function (data) {
-    var val = data.val();
-    this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl);
-  }.bind(this);
-  this.messagesRef.limitToLast(10).on('child_added', setMessage);
-  this.messagesRef.limitToLast(10).on('child_changed', setMessage);
+  // TODO(DEVELOPER): Load and listens for new messages.
 };
 
 // Saves a new message on the Firebase DB.
@@ -83,19 +68,9 @@ FriendlyChat.prototype.saveMessage = function(e) {
   e.preventDefault();
   // Check that the user entered a message and is signed in.
   if (this.messageInput.value && this.checkSignedInWithMessage()) {
-    var currentUser = this.auth.currentUser;
-    // Add a new message entry to the Firebase Database.
-    this.messagesRef.push({
-      name: currentUser.displayName,
-      text: this.messageInput.value,
-      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
-    }).then(function() {
-    // Clear message text field and SEND button state.
-    FriendlyChat.resetMaterialTextfield(this.messageInput);
-    this.toggleButton();
-    }.bind(this)).catch(function(error) {
-      console.error('Error writing new message to Firebase Database', error);
-    });
+
+    // TODO(DEVELOPER): push new message to Firebase.
+
   }
 };
 
@@ -103,15 +78,7 @@ FriendlyChat.prototype.saveMessage = function(e) {
 FriendlyChat.prototype.setImageUrl = function(imageUri, imgElement) {
   imgElement.src = imageUri;
 
-  // If image is on Cloud Storage, fetch image URL and set img element's src.
-  if (imageUri.startsWith('gs://')) {
-    imgElement.src = FriendlyChat.LOADING_IMAGE_URL; // Display a loading image first.
-    this.storage.refFromURL(imageUri).getMetadata().then(function(metadata) {
-      imgElement.src = metadata.downloadURLs[0];
-    });
-  } else {
-    imgElement.src = imageUri;
-  }
+  // TODO(DEVELOPER): If image is on Cloud Storage, fetch image URL and set img element's src.
 };
 
 // Saves a new message containing an image URI in Firebase.
@@ -135,46 +102,27 @@ FriendlyChat.prototype.saveImageMessage = function(event) {
   // Check if the user is signed-in
   if (this.checkSignedInWithMessage()) {
 
-    // We add a message with a loading icon that will get updated with the shared image.
-    var currentUser = this.auth.currentUser;
-    this.messagesRef.push({
-      name: currentUser.displayName,
-      imageUrl: FriendlyChat.LOADING_IMAGE_URL,
-      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
-    }).then(function(data) {
-      // Upload the image to Cloud Storage.
-      var filePath = currentUser.uid + '/' + data.key + '/' + file.name;
-      return this.storage.ref(filePath).put(file).then(function(snapshot) {
+    // TODO(DEVELOPER): Upload image to Firebase storage and add message.
 
-        // Get the file's Storage URI and update the chat message placeholder.
-        var fullPath = snapshot.metadata.fullPath;
-        return data.update({imageUrl: this.storage.ref(fullPath).toString()});
-      }.bind(this));
-    }.bind(this)).catch(function(error) {
-      console.error('There was an error uploading a file to Cloud Storage:', error);
-    });
   }
 };
 
 // Signs-in Friendly Chat.
 FriendlyChat.prototype.signIn = function() {
-  // Sign in Firebase with credential from the Google user.
-  var provider = new firebase.auth.GoogleAuthProvider();
-  this.auth.signInWithRedirect(provider);
+  // TODO(DEVELOPER): Sign in Firebase with credential from the Google user.
 };
 
 // Signs-out of Friendly Chat.
 FriendlyChat.prototype.signOut = function() {
-  // Sign out of Firebase.
-  this.auth.signOut();
+  // TODO(DEVELOPER): Sign out of Firebase.
 };
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 FriendlyChat.prototype.onAuthStateChanged = function(user) {
   if (user) { // User is signed in!
     // Get profile pic and user's name from the Firebase user object.
-    var profilePicUrl = user.photoURL;   // Get profile pic.
-    var userName = user.displayName;        // Get user's name.
+    var profilePicUrl = null;   // TODO(DEVELOPER): Get profile pic.
+    var userName = null;        // TODO(DEVELOPER): Get user's name.
 
     // Set the user's profile pic and name.
     this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
@@ -206,11 +154,8 @@ FriendlyChat.prototype.onAuthStateChanged = function(user) {
 
 // Returns true if user is signed-in. Otherwise false and displays a message.
 FriendlyChat.prototype.checkSignedInWithMessage = function() {
-  /* Check if user is signed-in Firebase. */
-  // Return true if the user is signed in Firebase
-  if (this.auth.currentUser) {
-    return true;
-  }
+  /* TODO(DEVELOPER): Check if user is signed-in Firebase. */
+
   // Display a message to the user using a Toast.
   var data = {
     message: 'You must sign-in first',
@@ -222,32 +167,12 @@ FriendlyChat.prototype.checkSignedInWithMessage = function() {
 
 // Saves the messaging device token to the datastore.
 FriendlyChat.prototype.saveMessagingDeviceToken = function() {
-  // Save the device token in the realtime datastore
-  firebase.messaging().getToken().then(function(currentToken) {
-    if (currentToken) {
-      console.log('Got FCM device token:', currentToken);
-      // Saving the Device Token to the datastore.
-      firebase.database().ref('/fcmTokens').child(currentToken)
-          .set(firebase.auth().currentUser.uid);
-    } else {
-      // Need to request permissions to show notifications.
-      this.requestNotificationsPermissions();
-    }
-  }.bind(this)).catch(function(error){
-    console.error('Unable to get messaging token.', error);
-  });
+  // TODO(DEVELOPER): Save the device token in the realtime datastore
 };
 
 // Requests permissions to show notifications.
 FriendlyChat.prototype.requestNotificationsPermissions = function() {
-  // Request permissions to send notifications.
-  console.log('Requesting notifications permission...');
-  firebase.messaging().requestPermission().then(function() {
-    // Notification permission granted.
-    this.saveMessagingDeviceToken();
-  }.bind(this)).catch(function(error) {
-    console.error('Unable to get permission to notify.', error);
-  });
+  // TODO(DEVELOPER): Request permissions to send notifications.
 };
 
 // Resets the given MaterialTextField.
