@@ -1,5 +1,19 @@
-# Firebase Web Codelab - Start code
+# Firebase Web Codelab Training
 
-This folder contains the starting code for the [Firebase: Build a Real Time Web Chat App Codelab](https://codelabs.developers.google.com/codelabs/firebase-web/).
+# For MI 449 Honors Option I taught myslef how to use Firebase
 
-If you'd like to jump directly to the end and see the finished code head to the [web](../web) directory.
+* I learnt Installation and Initial Set up of Firebase
+
+* Went through an hour long Codelab on https://codelabs.developers.google.com/codelabs/firebase-web/
+
+* I learnt Firebase Auth
+
+* I also learnt how to enable sign in using GitHub
+
+* I learnt Firebase realtime Database usage
+
+* I mastered how to use the Firebase Console
+
+* I learnt how to configure firebase.json file as an alternative to the Console
+
+* Currently working to add a feature to enrich the web chat app.
