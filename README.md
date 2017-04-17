@@ -1,6 +1,6 @@
 # Firebase Web Codelab Training
 
-# For MI 449 Honors Option I taught myslef how to use Firebase
+# For MI 449 Honors Option I taught myself how to use Firebase
 
 * I learnt Installation and Initial Set up of Firebase
 
